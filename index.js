@@ -59,10 +59,16 @@ const mainMenu = () => {
     });
 };
 
-const addDepartments = () => {};
 const viewDepartments = () => {};
+
+const addDepartments = () => {};
+
 const viewRoles = () => {};
+
 const addRoles = () => {};
+
 const addEmployees = () => {};
+
 const viewEmployees = () => {};
+
 const updateEmployeeRoles = () => {};
