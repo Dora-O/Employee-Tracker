@@ -8,9 +8,9 @@ const express = require('express');
 //credentials for server conneciton 
 const connection = mysql.createConnection({
     host: 'localhost',
-    port: 3001,
+    port: 3306,
     user: 'root',
-    password: '',
+    password: 'Max2390!',
     database: 'employee_db'
 });
 
@@ -74,18 +74,18 @@ const viewDepartments = () => {
 //function to add depts
 const addDepartments = () => {
     inquirer
-    .prompt([
-        {
-            name: 'dept_name',
-            type: 'input',
-            message: 'What is the name of the new department?',
-        },
-        {
-            name: 'dept_id',
-            type: 'input',
-            message: 'What is the ID of the new department?'
-        },
-    ])
+        .prompt([
+            {
+                name: 'dept_name',
+                type: 'input',
+                message: 'What is the name of the new department?',
+            },
+            {
+                name: 'dept_id',
+                type: 'input',
+                message: 'What is the ID of the new department?'
+            },
+        ])
 };
 
 //function to view roles 
@@ -117,11 +117,11 @@ const addRoles = () => {
 };
 
 //function to view employess 
-const viewEmployees = () => {
-    const query = "SELECT id, first_name, last_name, role_id FROM employee"
-    connection.query(query, (err, res) => {
-        res.forEach(({ id, first_name, last_name }) => {
-            console.log(`ID: ${id}|| Full Name: ${first_name} ${last_name}`)
+const viewEmployees = (answers) => {
+    const query = "SELECT id, first_name, last_name, role_id FROM employees"
+    connection.query(query, [answers.first_name, answers.last_name], (err, res) => {
+        res.forEach(({ id, first_name, last_name, role_id }) => {
+            console.log(`ID: ${id}|| Full Name: ${first_name} ${last_name}  || Title: ${role_id}`)
         });
         mainMenu();
     });
@@ -159,8 +159,44 @@ const addEmployees = () => {
                 type: 'input',
                 message: "What is the employee's manager ID?",
             }
-        ])
+        ]).then((answers) => {
+            connection.query('INSERT INTO employees SET ?',
+                {
+                    first_name: answers.first_name,
+                    last_name: answers.last_name,
+                    role_id: roles(answers.role_id),
+                    manager_id: answers.manager_id,
+                },
+                (err) => {
+                    if (err) throw err;
+                    console.log('Employee added!');
+                    mainMenu();
+                });
+        });
 };
+
+const roles = (answers) => {
+    switch (answers.role_id) {
+        case 'Manger':
+            role_id = 1;
+            break;
+        case 'Front-End Developer':
+            role_id = 2;
+            break;
+        case 'Back-End Developer':
+            role_id = 3;
+            break;
+        case 'Engineer':
+            role_id = 4;
+            break;
+        case 'Salesperson':
+            role_id = 5;
+            break;
+        case 'Social Media Specialist':
+            role_id = 6;
+            break;
+    }
+}
 
 //function to update employee role 
 const updateEmployeeRoles = () => { };
